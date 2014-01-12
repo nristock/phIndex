@@ -24,7 +24,7 @@
 
 <body>
 <?php
-# We don't want our index.php or relative links to show up
+# We don't want our index.php or relative links to show up ('go one up'-link will be generated automatically)
 $excludes = ['index.php', '.', '..'];
 
 # Change this if needed
@@ -92,6 +92,7 @@ if ($directory = opendir(__DIR__)) {
 
         if (is_dir($file)) {
             $directories[count($directories)] = $file;
+            updateDirectory($file);
         } elseif (is_file($file)) {
             $files[count($files)] = $file;
         }
@@ -143,6 +144,7 @@ if ($directory = opendir(__DIR__)) {
         </tbody>
     </table>
 
+    <hr>
 
     <?php
     closedir($directory);
