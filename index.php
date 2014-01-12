@@ -10,9 +10,11 @@
             min-width: 250px;
             padding-right: 50px;
         }
+
         tr > td:nth-child(2) {
             min-width: 200px;
         }
+
         tr > td:nth-child(3) {
             padding-left: 30px;
             text-align: right;
@@ -68,15 +70,15 @@ function updateIndex($dir)
 
     file_put_contents("$dir/index.php", $lines);
 }
+?>
 
+<?php
 # Start of actual script
-
-
 if ($directory = opendir(__DIR__)) {
     $files = array();
     $directories = array();
 
-    # Iterate through all files/directories in the current directory, match excludes
+# Iterate through all files/directories in the current directory, match excludes
     while (false !== ($file = readdir($directory))) {
         $isExcluded = false;
         foreach ($excludes as $exclude) {
@@ -95,38 +97,56 @@ if ($directory = opendir(__DIR__)) {
         }
     }
 
-    # Get our current path
+# Get our current path
     $currentPath = rtrim($_SERVER['PHP_SELF'], '/index.php');
-    echo "<h1>Index of $currentPath/</h1><hr>";
+    ?>
+    <h1>Index of <?= $currentPath ?>/</h1><hr>
 
+
+        <?php
     sort($files, SORT_NATURAL);
     sort($directories, SORT_NATURAL);
+    ?>
 
-    echo '<table><tbody>';
+    <table>
+        <tbody>
+        <!-- Print a 'Got to parent directory' link -->
+        <?php if (!empty($currentPath)) { ?>
+            <tr>
+                <td><a href="<?= dirname($currentPath) ?>">../</a></td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php } ?>
 
-    # Print a 'Got to parent directory' link
-    if (!empty($currentPath)) {
-        echo '<tr><td><a href="' . dirname($currentPath) . '">../</a></td><td></td><td></td></tr>';
-    }
+        <!-- Print files -->
+        <?php foreach ($files as $file) { ?>
+            <tr>
+                <td><a href="<?= basename($file) ?>"><?= $file ?></a></td>
+                <td><?= date('d-M-Y H:i', filemtime($file)) ?></td>
+                <td><?= filesize($file) ?></td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    </table>
 
-    # Print files
-    foreach ($files as $file) {
-        echo "<tr><td><a href=\"" . basename($file) . "\">$file</a></td><td>" . date('d-M-Y H:i', filemtime($file)) . "</td><td>" . filesize($file) . "</td></tr>";
-    }
-    echo '</tbody></table>';
+    <table>
+        <tbody>
+        <!-- Print directories -->
+        <?php foreach ($directories as $dir) { ?>
+            <tr>
+                <td><a href="<?= basename($dir) ?>"><?= $dir ?></a></td>
+                <td><?= date('d-M-Y H:i', filemtime($dir)) ?></td>
+                <td><?= filesize($dir) ?></td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    </table>
 
 
-    # Print directories
-    echo '<table><tbody>';
-    foreach ($directories as $dir) {
-        updateDirectory($dir);
-
-        echo "<tr><td><a href=\"" . basename($dir) . "\">$dir</a></td><td>" . date('d-M-Y H:i', filemtime($dir)) . "</td><td>" . filesize($dir) . "</td></tr>";
-    }
-    echo '</tbody></table><hr>';
-
+    <?php
     closedir($directory);
-}
+} //< if ($directory = opendir(__DIR__))
 ?>
 </body>
 </html>
