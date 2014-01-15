@@ -165,10 +165,6 @@ $currentPath = rtrim($_SERVER['PHP_SELF'], '/index.php');
             float: right;
         }
 
-        .clearfix {
-            clear: both;
-        }
-
         .fluid-row:nth-of-type(even) {
             background-color: #f8f8ff;
         }
